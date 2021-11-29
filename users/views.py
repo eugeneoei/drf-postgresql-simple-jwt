@@ -3,7 +3,7 @@ from rest_framework import status, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 
-from .models import CustomUser
+from .models import CustomUser as User
 from .serializers import CustomUserSerializer, CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -11,7 +11,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class UserViewSet(ModelViewSet):
 
-    queryset = CustomUser.objects.all()
+    queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
     '''
@@ -19,7 +19,7 @@ class UserViewSet(ModelViewSet):
     '''
     def create(self, request, *args, **kwargs):
         email = request.data.get('email')
-        user = CustomUser.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
         if email and user:
             return Response(
                 {
