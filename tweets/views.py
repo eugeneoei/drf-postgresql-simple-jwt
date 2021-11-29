@@ -17,26 +17,13 @@ class TweetViewSet(ModelViewSet):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
 
-    # def create(self, request, *args, **kwargs):
-    #     # email = request.data.get('email')
-    #     # user = User.objects.filter(email=email).first()
-    #     # if email and user:
-    #     #     return Response(
-    #     #         {
-    #     #             'error': 'Email has already been taken.'
-    #     #         },
-    #     #         status=status.HTTP_400_BAD_REQUEST
-    #     #     )
-    #     # return super().create(request, *args, **kwargs)
-    #     print(self.request.user.id)
-    #     return Response(
-    #         {
-    #             'create': 'tweet'
-    #         },
-    #         status=status.HTTP_201_CREATED
-    #     )
-
     def perform_create(self, serializer):
+        '''
+        overwrite method to set user field in Tweet to user in request
+
+        Resources:
+        - https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create
+        '''
         serializer.save(user=self.request.user)
 
     def get_permissions(self):

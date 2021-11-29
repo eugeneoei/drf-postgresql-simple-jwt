@@ -7,7 +7,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(CustomTokenObtainPairSerializer, cls).get_token(user)
-        # Add custom claims
+        '''
+        Add custom claims here
+        Implmentation is for demo purposes
+        In fact, is_staff value can be retrieved by calling self.request.user.is_staff
+        '''
         token['is_staff'] = user.is_staff
         return token
 
