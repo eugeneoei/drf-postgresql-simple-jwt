@@ -4,9 +4,11 @@ from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
 from users.views import CustomTokenObtainPairView, UserViewSet
+from tweets.views import TweetViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
+router.register(r'tweets', TweetViewSet, basename='tweet')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
