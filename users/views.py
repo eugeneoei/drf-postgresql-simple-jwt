@@ -2,9 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class HelloWorldView(APIView):
 
@@ -19,8 +23,6 @@ class HelloWorldView(APIView):
         )
 
 class Protected(APIView):
-
-    # permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
         return Response(
