@@ -80,10 +80,14 @@ class CustomUserPasswordSerializer(serializers.ModelSerializer):
                 })
         return data
 
+    '''
+    update method needs to be implmented
+    '''
     def update(self, instance, validated_data):
         instance.set_password(validated_data['new_password'])
         instance.save()
         '''
-        TODO: invalidate all tokens that belong to this user
+        TODO:
+        - invalidate all tokens that belong to this user
         '''
         return instance
