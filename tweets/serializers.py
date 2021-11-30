@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import Tweet
-from users.models import CustomUser as User
 from users.serializers import CustomUserSerializer as UserSerializer
 
+# class TweetSerializer(serializers.HyperlinkedModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
 
     content = serializers.CharField(required=True)

@@ -10,4 +10,4 @@ class Tweet(models.Model):
     updated_at = models.DateTimeField(verbose_name='updated at', null=True, default=None)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
