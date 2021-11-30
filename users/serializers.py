@@ -16,12 +16,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_staff'] = user.is_staff
         return token
 
+'''
+to modify data returned. otherwise, returns tweet id only
+'''
+class TweetsListingField(serializers.RelatedField):
+    def to_representation(self, value):
+        return {
+            'id': value.id,
+            'content': value.content,
+            'created_at': value.created_at
+        }
+
 class CustomUserSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     password = serializers.CharField(min_length=8, write_only=True)
+    tweets = TweetsListingField(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -30,7 +42,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'email',
             'first_name',
             'last_name',
-            'tweets', # refers to related_name in Tweets model. if related_name is not declared, default to use is tweet_set
+            'tweets', # refers to related_name in Tweets model
             'password'
         )
         extra_kwargs = {
