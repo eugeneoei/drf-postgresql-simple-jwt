@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Tweet
 from users.serializers import CustomUserSerializer as UserSerializer
 
-# class TweetSerializer(serializers.HyperlinkedModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
 
     content = serializers.CharField(required=True)
@@ -22,5 +21,5 @@ class TweetSerializer(serializers.ModelSerializer):
             'content',
             'created_at',
             'updated_at',
-            'user_details'
+            'user_details',
         )

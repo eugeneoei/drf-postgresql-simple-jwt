@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import CustomUser as User
+# from tweets.serializers import TweetSerializer
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -24,7 +25,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'password')
+        fields = (
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'tweets', # refers to related_name in Tweets model. if related_name is not declared, default to use is tweet_set
+            'password'
+        )
         extra_kwargs = {
             'password': {
                 'write_only': True
