@@ -33,3 +33,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+    '''
+    Using a different API for updating of password
+    '''
+    def update(self, instance, validated_data):
+        password = validated_data.get('password')
+        if password:
+            raise serializers.ValidationError(
+                {
+                    'error': 'Incorrect API endpoint to update password.'
+                }
+            )
+        return super().update(instance, validated_data)

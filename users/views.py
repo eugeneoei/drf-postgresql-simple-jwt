@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import CustomUser as User
-from .serializers import CustomUserSerializer, CustomTokenObtainPairSerializer
+from .serializers import CustomUserSerializer as UserSerializer, CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -12,7 +12,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class UserViewSet(ModelViewSet):
 
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
 
     '''
     Overwrite create method, else Django throws 500 error
