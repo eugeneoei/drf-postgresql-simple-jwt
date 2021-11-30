@@ -1,16 +1,9 @@
-from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Tweet
 from .serializers import TweetSerializer
-
-# list
-# create
-# retrieve
-# update
-# partial_update
-# destroy
+from .permissions import IsOwner
 
 class TweetViewSet(ModelViewSet):
 
@@ -34,15 +27,8 @@ class TweetViewSet(ModelViewSet):
             permission_classes = (permissions.IsAuthenticated,)
         else:
             '''
-            TODO:
-            refactor - IsAdminOrTargetUser custom permissions
-
-            covers update, partial_update and destroy actions
+            covers update, partial_update and destroy
             '''
-            pk = self.kwargs.get('pk')
-            if pk ==  str(self.request.user.id):
-                permission_classes = (permissions.IsAuthenticated,)
-            else:
-                permission_classes = (permissions.IsAdminUser,)
+            permission_classes = (IsOwner, )
 
         return [permission() for permission in permission_classes]
