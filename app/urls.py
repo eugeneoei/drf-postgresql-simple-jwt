@@ -13,6 +13,7 @@ router.register(r'tweets', TweetViewSet, basename='tweet')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/users/', include('users.urls')),
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_create'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

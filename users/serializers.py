@@ -46,3 +46,44 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 }
             )
         return super().update(instance, validated_data)
+
+class CustomUserPasswordSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, min_length=8, required=True)
+    confirm_new_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'password',
+            'new_password',
+            'confirm_new_password'
+        )
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            user = request.user
+            if not user.check_password(data['password']):
+                raise serializers.ValidationError({
+                    'error': 'Current password is incorrect.'
+                })
+
+            if data['new_password'] != data['confirm_new_password']:
+                raise serializers.ValidationError({
+                    'error': 'New password and confirm new password do not match.'
+                })
+        return data
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        '''
+        TODO: invalidate all tokens that belong to this user
+        '''
+        return instance
