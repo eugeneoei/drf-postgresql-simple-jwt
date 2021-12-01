@@ -15,7 +15,7 @@ class CustomUserAdmin(UserAdmin):
     displays user information in admin panel in exact order to what is declared here
     '''
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'first_name', 'last_name', 'password')}),
         ('Permissions', {'fields': ('is_superuser', 'is_staff', 'is_active')}),
     )
     '''
