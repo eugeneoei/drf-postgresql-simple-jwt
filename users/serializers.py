@@ -18,6 +18,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 '''
 to modify data returned. otherwise, returns tweet id only
+works only if there is a many-to-one relationship established
 '''
 class TweetsListingField(serializers.RelatedField):
     def to_representation(self, value):

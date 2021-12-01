@@ -10,9 +10,12 @@ from .serializers import (
     CustomUserPasswordSerializer as UserPasswordSerializer,
     CustomTokenObtainPairSerializer
 )
+from .permissions import IsUserObjectOwner
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
 
 class UserViewSet(ModelViewSet):
 
@@ -28,38 +31,33 @@ class UserViewSet(ModelViewSet):
         if email and user:
             return Response(
                 {
-                    'error': 'Email has already been taken.'
+                    'error': 'Email is already in used.'
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
         return super().create(request, *args, **kwargs)
 
+    def destroy(self):
+        return Response(
+            {
+                'error': 'Not allowed.'
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create', 'retrieve', 'list']:
             permission_classes = (permissions.AllowAny,)
-        elif self.action in ['retrieve', 'update', 'partial_update']:
-            '''
-            TODO:
-            refactor - IsAdminOrTargetUser custom permissions
-            '''
-            pk = self.kwargs.get('pk')
-            if pk ==  str(self.request.user.id):
-                permission_classes = (permissions.IsAuthenticated,)
-            else:
-                permission_classes = (permissions.IsAdminUser,)
+
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = (IsUserObjectOwner,)
         else:
-            # covers list and destroy actions
+            # covers destroy action
             permission_classes = (permissions.IsAdminUser,)
 
         return [permission() for permission in permission_classes]
 
-'''
-TODO:
-- Add UpdateAPIView to allow user to update password
-- Check if given password matches current password
-- Check if new password matches confirm password
-- Check if new password matches current password
-'''
+
 class UserPasswordUpdate(UpdateAPIView):
 
     queryset = User.objects.all()

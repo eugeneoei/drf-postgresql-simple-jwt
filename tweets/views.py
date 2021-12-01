@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from .models import Tweet
 from .serializers import TweetSerializer
-from .permissions import IsOwner
+from .permissions import IsTweetOwner
 
 class TweetViewSet(ModelViewSet):
 
@@ -29,6 +29,6 @@ class TweetViewSet(ModelViewSet):
             '''
             covers update, partial_update and destroy
             '''
-            permission_classes = (IsOwner, )
+            permission_classes = (IsTweetOwner, )
 
         return [permission() for permission in permission_classes]
