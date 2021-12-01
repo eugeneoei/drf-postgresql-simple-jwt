@@ -21,39 +21,23 @@ class TweetUserSerializer(serializers.ModelSerializer):
         )
 
 
-class CommentsListingField(serializers.RelatedField):
+# class CommentsListingField(serializers.RelatedField):
 
-    def to_representation(self, value):
-        '''
-        QUESTIONS: is this the right way?
-        '''
-        user = get_object_or_404(User, pk=value.user_id)
-        return {
-            'id': value.id,
-            'content': value.content,
-            'created_at': value.created_at,
-            'user': {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name
-            }
-        }
-
-
-class TweetCommentSerializer(serializers.ModelSerializer):
-
-    # content = serializers.CharField(read_only=True)
-    # last_name = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = (
-            'id',
-            'content',
-            # 'user'
-            # 'first_name',
-            # 'last_name'
-        )
+#     def to_representation(self, value):
+#         '''
+#         QUESTIONS: is this the right way?
+#         '''
+#         user = get_object_or_404(User, pk=value.user_id)
+#         return {
+#             'id': value.id,
+#             'content': value.content,
+#             'created_at': value.created_at,
+#             'user': {
+#                 'id': user.id,
+#                 'first_name': user.first_name,
+#                 'last_name': user.last_name
+#             }
+#         }
 
 
 class TweetSerializer(serializers.ModelSerializer):
@@ -74,9 +58,8 @@ class TweetSerializer(serializers.ModelSerializer):
     '''
     Populate child objects
     '''
-    comments = CommentsListingField(many=True, read_only=True)
-    # comments = TweetCommentSerializer(read_only=True)
-    # comments = CommentSerializer(source='comments', read_only=True)
+    # comments = CommentsListingField(many=True, read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
 
     '''
     QUESTIONS:

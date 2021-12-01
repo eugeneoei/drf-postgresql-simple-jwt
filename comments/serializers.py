@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Comment
 from users.models import CustomUser as User
+from tweets.models import Tweet
 
 
 class CommentUserSerializer(serializers.ModelSerializer):
@@ -22,6 +23,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     content = serializers.CharField(required=True)
     user = CommentUserSerializer(read_only=True)
+    # parent_id = serializers.PrimaryKeyRelatedField(queryset=Tweet.objects.all(), source='tweet.id')
 
     class Meta:
         model = Comment
@@ -29,5 +31,6 @@ class CommentSerializer(serializers.ModelSerializer):
             'id',
             'content',
             'created_at',
-            'user'
+            'user',
+            # 'parent_id'
         )
