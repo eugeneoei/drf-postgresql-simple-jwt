@@ -2,20 +2,23 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
+from rest_framework_nested.routers import NestedSimpleRouter
 
 from users.views import CustomTokenObtainPairView, UserViewSet
 from tweets.views import TweetViewSet
 from comments.views import CommentViewSet
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'tweets', TweetViewSet, basename='tweet')
-# router.register(r'tweets/<pk>/comments', CommentViewSet, basename='comments')
-router.register(r'comments', CommentViewSet, basename='comments')
+router.register(r'api/users', UserViewSet, basename='users')
+router.register(r'api/tweets', TweetViewSet, basename='tweets')
+
+tweets_router = NestedSimpleRouter(router, r'api/tweets', lookup='tweets')
+tweets_router.register(r'comments', CommentViewSet, basename='comments')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
+    path('', include(tweets_router.urls)),
     path('api/users/<pk>/', include('users.urls')),
     # path('api/tweets/<pk>/comments/', include('comments.urls')),
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_create'),

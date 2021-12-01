@@ -23,7 +23,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
     content = serializers.CharField(required=True)
     user = CommentUserSerializer(read_only=True)
-    # parent_id = serializers.PrimaryKeyRelatedField(queryset=Tweet.objects.all(), source='tweet.id')
+    tweet_id = serializers.PrimaryKeyRelatedField(
+        queryset=Tweet.objects.all(),
+        source='tweet.id'
+    )
 
     class Meta:
         model = Comment
@@ -32,5 +35,5 @@ class CommentSerializer(serializers.ModelSerializer):
             'content',
             'created_at',
             'user',
-            # 'parent_id'
+            'tweet_id'
         )
