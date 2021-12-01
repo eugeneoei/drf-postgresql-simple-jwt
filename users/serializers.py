@@ -66,8 +66,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
     # # returns paginated tweets
     # tweets = serializers.SerializerMethodField('paginated_tweet')
 
+    '''
+    NOTE:
+    cant do the following:
+
+        > tweets = TweetSerializer(many=True, read_only=True)
+
+    this leads to circular import error
+    '''
+
     class Meta:
         model = User
+        # every field could be attribute of model or a method => because using ModelSerializer?
         fields = (
             'id',
             'email',
