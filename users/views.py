@@ -1,8 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView
 
 from .models import CustomUser as User
 from .serializers import (
@@ -11,6 +12,8 @@ from .serializers import (
     CustomTokenObtainPairSerializer
 )
 from .permissions import IsUserObjectOwner
+from tweets.models import Tweet
+from tweets.serializers import TweetListSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -71,3 +74,13 @@ class UserPasswordUpdate(UpdateAPIView):
             },
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+class UserTweetList(ListAPIView):
+
+    serializer_class = TweetListSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self,):
+        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
+        return Tweet.objects.filter(user=user)
+

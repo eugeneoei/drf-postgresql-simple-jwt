@@ -49,3 +49,13 @@ class TweetSerializer(serializers.ModelSerializer):
             'user_details',
             'user'
         )
+
+class TweetListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tweet
+        fields = (
+            'id',
+            'content',
+            'created_at'
+        )
