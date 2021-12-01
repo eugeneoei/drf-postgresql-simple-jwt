@@ -4,7 +4,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import CustomUser as User
 # from tweets.models import Tweet
-# from tweets.serializers import TweetSerializer
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -56,8 +55,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     '''
     Possible approaches to return related model. Though, unlikely to be applicable for many-to-one relationship
     since query will not be efficient and response will bloat.
+
     In this case, a better implementation could be to have an endpoint to return tweets of a user eg
     /users/:id/tweets/
+
+    Seems more ideal for one-to-one relationship.
     '''
     # returns formatted tweets
     tweets = TweetsListingField(many=True, read_only=True)
@@ -97,7 +99,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     # def paginated_tweet(self, obj):
-    #     page_size = self.context['request'].query_params.get('size') or 1
+    #     page_size = self.context['request'].query_params.get('size') or 2
     #     # page_size = self.context['request'].query_params.get('size') or 10
     #     paginator = Paginator(obj.tweets.all(), page_size)
     #     page = self.context['request'].query_params.get('page') or 1
