@@ -37,6 +37,9 @@ class TweetSerializer(serializers.ModelSerializer):
 
     '''
     Populate child objects
+    TODO:
+    - paginate comments
+    - get more comments through /api/tweets/:id/comments?page=<page_number>
     '''
     comments = CommentSerializer(many=True, read_only=True)
 
@@ -55,14 +58,4 @@ class TweetSerializer(serializers.ModelSerializer):
             # 'user_details',
             'user',
             'comments'
-        )
-
-class TweetListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Tweet
-        fields = (
-            'id',
-            'content',
-            'created_at'
         )

@@ -13,13 +13,17 @@ class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
+        '''
+        QUESTIONS
+        is there a better way to filter? doesn't seem like an implementation like this will scale well
+        '''
         queryset = Comment.objects.all()
-        tweets_pk = self.kwargs.get('tweets_pk')
+        tweets_pk = self.kwargs.get('tweet_pk')
         queryset = queryset.filter(tweet_id=tweets_pk)
         return queryset
 
     def perform_create(self, serializer):
-        tweets_pk = self.kwargs.get('tweets_pk')
+        tweets_pk = self.kwargs.get('tweet_pk')
         tweet = get_object_or_404(Tweet, pk=tweets_pk)
         serializer.save(user=self.request.user, tweet=tweet)
 
