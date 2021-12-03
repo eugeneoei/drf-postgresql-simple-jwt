@@ -27,6 +27,7 @@ TBC
 
 # Todos
 
+- Add `CommentReaction` model
 - Blacklist tokens on password update and when tokens are refreshed
 
 # Common Questions
