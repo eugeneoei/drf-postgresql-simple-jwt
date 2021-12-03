@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'users',
     'tweets',
+    'tweet_reactions',
     'comments',
     'rest_framework'
 ]
