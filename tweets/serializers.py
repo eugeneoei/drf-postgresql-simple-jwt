@@ -26,7 +26,9 @@ class TweetSerializer(serializers.ModelSerializer):
 
     content = serializers.CharField(required=True)
     '''
-    Populate parent object
+    Populate related objects.
+    Related objects must be read only. Otherwise, perform_create in views will not be called.
+
     Resources:
     - https://stackoverflow.com/questions/61617985/creating-a-serializer-to-work-with-model-relationships
     '''
