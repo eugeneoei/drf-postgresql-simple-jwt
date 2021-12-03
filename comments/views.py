@@ -18,13 +18,14 @@ class CommentViewSet(ModelViewSet):
         is there a better way to filter? doesn't seem like an implementation like this will scale well
         '''
         queryset = Comment.objects.all()
-        tweets_pk = self.kwargs.get('tweet_pk')
-        queryset = queryset.filter(tweet_id=tweets_pk)
+        tweet_pk = self.kwargs.get('tweet_pk')
+        queryset = queryset.filter(tweet_id=tweet_pk)
         return queryset
 
     def perform_create(self, serializer):
-        tweets_pk = self.kwargs.get('tweet_pk')
-        tweet = get_object_or_404(Tweet, pk=tweets_pk)
+        print('>>>>>>> comment perform create')
+        tweet_pk = self.kwargs.get('tweet_pk')
+        tweet = get_object_or_404(Tweet, pk=tweet_pk)
         serializer.save(user=self.request.user, tweet=tweet)
 
     def get_permissions(self):
