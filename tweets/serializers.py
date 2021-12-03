@@ -1,8 +1,7 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from .models import Tweet
-from users.serializers import CustomUserSerializer as UserSerializer
+# from users.serializers import CustomUserSerializer as UserSerializer
 from users.models import CustomUser as User
 from comments.serializers import CommentSerializer
 

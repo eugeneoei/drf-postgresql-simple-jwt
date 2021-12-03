@@ -1,9 +1,10 @@
-# from django.core.paginator import Paginator
+from django.core.paginator import Paginator
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import CustomUser as User
-# from tweets.models import Tweet
+from tweets.serializers import TweetSerializer
+from app.settings import REST_FRAMEWORK as rest_framework_settings
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -32,17 +33,6 @@ class TweetsListingField(serializers.RelatedField):
         }
 
 
-# class UserTweetSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Tweet
-#         fields = (
-#             'id',
-#             'content',
-#             'created_at'
-#         )
-
-
 class CustomUserSerializer(serializers.ModelSerializer):
 
     '''
@@ -52,28 +42,26 @@ class CustomUserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     password = serializers.CharField(min_length=8, write_only=True)
+
+    # 3 possible approaches to return data of related model.
     '''
-    Possible approaches to return related model. Though, unlikely to be applicable for many-to-one relationship
-    since query will not be efficient and response will bloat.
-
-    In this case, a better implementation could be to have an endpoint to return tweets of a user eg
-    /users/:id/tweets/
-
-    Seems more ideal for one-to-one relationship.
+    Approach 1
+    returns formatted tweets
     '''
-    # returns formatted tweets
-    tweets = TweetsListingField(many=True, read_only=True)
-    # # returns paginated tweets
-    # tweets = serializers.SerializerMethodField('paginated_tweet')
+    # tweets = TweetsListingField(many=True, read_only=True)
+    '''
+    Approach 2
+    return paginated tweets of a user - refer to paginated_tweet method
+    - cant possibly return all tweets of a user in one response
+    - to get more tweets of a user, make API endpoint to /users/:id/tweets/
+    '''
+    tweets = serializers.SerializerMethodField('paginated_tweet')
 
     '''
-    NOTE:
-    cant do the following:
-
-        > tweets = TweetSerializer(many=True, read_only=True)
-
-    this leads to circular import error
+    Approach 3
+    returns user tweets based on TweetSerializer
     '''
+    # tweets = TweetSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -96,7 +84,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
     '''
-    Using a different API for updating of password
+    Updating of password is through a different endpoint (/api/users/:id/password) and serializer (CustomUserPasswordSerializer)
     '''
     def update(self, instance, validated_data):
         password = validated_data.get('password')
@@ -108,23 +96,25 @@ class CustomUserSerializer(serializers.ModelSerializer):
             )
         return super().update(instance, validated_data)
 
-    # def paginated_tweet(self, obj):
-    #     page_size = self.context['request'].query_params.get('size') or 2
-    #     # page_size = self.context['request'].query_params.get('size') or 10
-    #     paginator = Paginator(obj.tweets.all(), page_size)
-    #     page = self.context['request'].query_params.get('page') or 1
-    #     tweets = paginator.page(page)
-    #     serializer = UserTweetSerializer(tweets, many=True)
-    #     print('')
-    #     print('obj >>', obj)
-    #     print('count >>', paginator.count)
-    #     print('num_pages >>', paginator.num_pages)
-    #     print('page_range >>', paginator.page_range)
-    #     print('-----------------------')
-    #     '''
-    #     QUESTIONS: how to return paginated info such as total object count, number of pages etc?
-    #     '''
-    #     return serializer.data
+    def paginated_tweet(self, obj):
+        page_size = rest_framework_settings.get('PAGE_SIZE', None)
+        if page_size:
+            paginator = Paginator(obj.tweets.all(), page_size)
+            # return first page tweets only
+            tweets = paginator.page(1)
+            serializer = TweetSerializer(tweets, many=True)
+            '''
+            QUESTIONS:
+            - how to return paginated info such as total object count, number of pages etc?
+            - information is available in paginator object
+                > paginator.count
+                > paginator.num_pages
+                > paginator.page_range
+            '''
+            return serializer.data
+
+        # QUESTIONS: correct way to throw an exception?
+        raise Exception('PAGE_SIZE not set for REST_FRAMEWORK in settings.py')
 
 
 class CustomUserPasswordSerializer(serializers.ModelSerializer):

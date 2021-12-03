@@ -21,6 +21,7 @@ class UserViewSet(ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    http_method_names = ['head', 'get', 'post', 'patch']
 
     '''
     Overwrite create method, else Django throws 500 error
@@ -36,14 +37,6 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return super().create(request, *args, **kwargs)
-
-    def destroy(self):
-        return Response(
-            {
-                'error': 'Not allowed.'
-            },
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
 
     def get_permissions(self):
         if self.action in ['create', 'retrieve', 'list']:
@@ -63,11 +56,4 @@ class UserPasswordUpdate(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserPasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
-    def put():
-        return Response(
-            {
-                'error': 'Method not allowed.'
-            },
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
+    http_method_names = ['head', 'patch']
