@@ -7,6 +7,7 @@ from rest_framework_nested.routers import NestedSimpleRouter
 from users.views import CustomTokenObtainPairView, UserViewSet
 from tweets.views import TweetViewSet, UserTweetList
 from comments.views import CommentViewSet
+from tweet_reactions.views import CreateUpdateDestroyTweetReaction
 
 router = DefaultRouter()
 router.register(r'api/users', UserViewSet, basename='users')
@@ -18,6 +19,7 @@ user_tweets_router.register(r'tweets', UserTweetList, basename='user_tweets')
 # value in lookup becomes variable represented in url params => "<lookup_string>_pk"
 tweets_router = NestedSimpleRouter(router, r'api/tweets', lookup='tweet')
 tweets_router.register(r'comments', CommentViewSet, basename='tweet_comments')
+tweets_router.register(r'reactions', CreateUpdateDestroyTweetReaction, basename='tweet_reactions')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

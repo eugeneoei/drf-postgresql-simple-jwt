@@ -2,6 +2,7 @@
 
 - Custom user model
 - Nested routing with [drf-nested-routers](https://github.com/alanjds/drf-nested-routers)
+- User can only have 1 reaction to a Tweet
 
 # Getting started
 

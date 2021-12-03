@@ -17,5 +17,5 @@ class TweetReaction(models.Model):
         SAD = 'SA', _('Sad')
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-    reaction = models.CharField(max_length=2, choices=Reactions.choices)
+    tweet = models.ForeignKey(Tweet, related_name='reactions', on_delete=models.CASCADE)
+    type = models.CharField(max_length=2, choices=Reactions.choices)

@@ -6,6 +6,7 @@ from .models import Tweet
 # from users.serializers import CustomUserSerializer as UserSerializer
 from users.models import CustomUser as User
 from comments.serializers import CommentSerializer
+from tweet_reactions.serializers import TweetReactionSerializer
 
 class TweetUserSerializer(serializers.ModelSerializer):
 
@@ -51,6 +52,8 @@ class TweetSerializer(serializers.ModelSerializer):
     '''
     comments = serializers.SerializerMethodField('paginated_comments')
 
+    reactions = TweetReactionSerializer(many=True, read_only=True)
+
     class Meta:
         model = Tweet
         fields = (
@@ -60,7 +63,8 @@ class TweetSerializer(serializers.ModelSerializer):
             'updated_at',
             # 'user_details',
             'user',
-            'comments'
+            'comments',
+            'reactions'
         )
 
     def paginated_comments(self, obj):
