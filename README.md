@@ -19,3 +19,5 @@ https://medium.com/django-rest/django-rest-framework-jwt-authentication-94bee36f
 https://hackernoon.com/110percent-complete-jwt-authentication-with-django-and-react-2020-tiq3bhj
 
 https://medium.com/@gurupratap.matharu/build-a-restapi-using-nested-serializers-in-django-rest-framework-c0f6a31fd865
+
+https://newbedev.com/how-to-set-current-user-to-user-field-in-django-rest-framework

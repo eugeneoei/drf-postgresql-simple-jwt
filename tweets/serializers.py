@@ -35,7 +35,7 @@ class TweetSerializer(serializers.ModelSerializer):
     # user_details = UserSerializer(source='user', read_only=True)
     # # this approach populates specific fields in parent object using a different serializer
     # # in this case, populates fields defined in TweetUserSerializer
-    user = TweetUserSerializer()
+    user = TweetUserSerializer(read_only=True)
     '''
     QUESTIONS:
     - why "user_details" variable can be replaced with another variable name but not "user" variable?
@@ -52,7 +52,7 @@ class TweetSerializer(serializers.ModelSerializer):
     '''
     comments = serializers.SerializerMethodField('paginated_comments')
 
-    reactions = TweetReactionSerializer(many=True, read_only=True)
+    reactions = TweetReactionSerializer(read_only=True)
 
     class Meta:
         model = Tweet

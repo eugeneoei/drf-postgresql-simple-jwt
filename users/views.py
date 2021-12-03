@@ -25,6 +25,8 @@ class UserViewSet(ModelViewSet):
 
     '''
     Overwrite create method, else Django throws 500 error
+
+    TODO: this validation should be in serializer
     '''
     def create(self, request, *args, **kwargs):
         email = request.data.get('email')
