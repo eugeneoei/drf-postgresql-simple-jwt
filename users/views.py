@@ -23,23 +23,6 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = ['head', 'get', 'post', 'patch']
 
-    '''
-    Overwrite create method, else Django throws 500 error
-
-    TODO: this validation should be in serializer
-    '''
-    def create(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        user = User.objects.filter(email=email).first()
-        if email and user:
-            return Response(
-                {
-                    'error': 'Email is already in used.'
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        return super().create(request, *args, **kwargs)
-
     def get_permissions(self):
         if self.action in ['create', 'retrieve', 'list']:
             permission_classes = (permissions.AllowAny,)

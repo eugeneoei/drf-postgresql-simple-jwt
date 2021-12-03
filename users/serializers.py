@@ -41,7 +41,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, write_only=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    password = serializers.CharField(min_length=8, write_only=True)
+    password = serializers.CharField(required=True, min_length=8, write_only=True)
 
     # 3 possible approaches to return data of related model.
     '''
@@ -72,7 +72,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'tweets', # refers to related_name in Tweets model
-            'password'
+            'password',
         )
         extra_kwargs = {
             'password': {
@@ -95,6 +95,29 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 }
             )
         return super().update(instance, validated_data)
+
+    def validate(self, attrs):
+        '''
+        validate that:
+        1. password and confirm_password match
+        2. email does not exist in DB
+        '''
+        data = self.context.get('request').data
+        password = data.get('password')
+        confirm_password = data.get('confirm_password', None)
+        email = data.get('email')
+        if not password == confirm_password:
+            raise serializers.ValidationError({
+                'error': 'Password and confirm password do not match.'
+            })
+
+        user = User.objects.filter(email=email).first()
+        if user:
+            raise serializers.ValidationError({
+                'error': 'Email has already been taken.'
+            })
+
+        return super().validate(attrs)
 
     def paginated_tweet(self, obj):
         page_size = REST_FRAMEWORK_SETTINGS.get('PAGE_SIZE', None)

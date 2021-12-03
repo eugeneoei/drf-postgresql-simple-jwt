@@ -38,23 +38,24 @@ class TweetSerializer(serializers.ModelSerializer):
     # # this approach populates specific fields in parent object using a different serializer
     # # in this case, populates fields defined in TweetUserSerializer
     user = TweetUserSerializer(read_only=True)
-    '''
-    QUESTIONS:
-    - why "user_details" variable can be replaced with another variable name but not "user" variable?
-    '''
 
     '''
     returns all comments
     '''
     # comments = CommentSerializer(many=True, read_only=True)
-
     '''
     returns paginated comments
     get more comments through /api/tweets/:id/comments?page=<page_number>
     '''
     comments = serializers.SerializerMethodField('paginated_comments')
 
-    reactions = TweetReactionSerializer(read_only=True)
+    '''
+    TODO:
+    Return total count of each reaction?
+    Return flag if user reacted to tweet?
+    achieve using SerializerMethodField where you get all objects and count?
+    '''
+    reactions = TweetReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Tweet
