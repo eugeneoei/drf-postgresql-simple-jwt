@@ -1,4 +1,6 @@
-# Django REST Framework with Simple JWT
+# Django REST Framework with PostgreSQL and Simple JWT
+
+An experiment on Django REST Framework with PostgreSQL and Simple JWT.
 
 **Key Implementations:**
 - Custom user model by modifying `Django`'s default user model and set `email` as `USERNAME_FIELD` instead of the default `username`
