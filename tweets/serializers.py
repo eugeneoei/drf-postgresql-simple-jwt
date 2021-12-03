@@ -1,5 +1,7 @@
+from django.core.paginator import Paginator
 from rest_framework import serializers
 
+from app.settings import COMMENTS_PAGE_SIZE
 from .models import Tweet
 # from users.serializers import CustomUserSerializer as UserSerializer
 from users.models import CustomUser as User
@@ -33,19 +35,21 @@ class TweetSerializer(serializers.ModelSerializer):
     # # this approach populates specific fields in parent object using a different serializer
     # # in this case, populates fields defined in TweetUserSerializer
     user = TweetUserSerializer()
-
-    '''
-    Populate child objects
-    TODO:
-    - paginate comments
-    - get more comments through /api/tweets/:id/comments?page=<page_number>
-    '''
-    comments = CommentSerializer(many=True, read_only=True)
-
     '''
     QUESTIONS:
     - why "user_details" variable can be replaced with another variable name but not "user" variable?
     '''
+
+    '''
+    returns all comments
+    '''
+    # comments = CommentSerializer(many=True, read_only=True)
+
+    '''
+    returns paginated comments
+    get more comments through /api/tweets/:id/comments?page=<page_number>
+    '''
+    comments = serializers.SerializerMethodField('paginated_comments')
 
     class Meta:
         model = Tweet
@@ -58,3 +62,23 @@ class TweetSerializer(serializers.ModelSerializer):
             'user',
             'comments'
         )
+
+    def paginated_comments(self, obj):
+        page_size = COMMENTS_PAGE_SIZE if COMMENTS_PAGE_SIZE else None
+        if page_size:
+            paginator = Paginator(obj.comments.all(), page_size)
+            # return first page comments only
+            comments = paginator.page(1)
+            serializer = CommentSerializer(comments, many=True)
+            '''
+            QUESTIONS:
+            - how to return paginated info such as total object count, number of pages etc?
+            - information is available in paginator object
+                > paginator.count
+                > paginator.num_pages
+                > paginator.page_range
+            '''
+            return serializer.data
+
+        # QUESTIONS: correct way to throw an exception?
+        raise Exception('PAGE_SIZE not set for REST_FRAMEWORK in settings.py')

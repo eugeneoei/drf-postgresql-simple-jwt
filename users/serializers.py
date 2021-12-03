@@ -2,9 +2,9 @@ from django.core.paginator import Paginator
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from app.settings import REST_FRAMEWORK as REST_FRAMEWORK_SETTINGS
 from .models import CustomUser as User
 from tweets.serializers import TweetSerializer
-from app.settings import REST_FRAMEWORK as rest_framework_settings
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -97,7 +97,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def paginated_tweet(self, obj):
-        page_size = rest_framework_settings.get('PAGE_SIZE', None)
+        page_size = REST_FRAMEWORK_SETTINGS.get('PAGE_SIZE', None)
         if page_size:
             paginator = Paginator(obj.tweets.all(), page_size)
             # return first page tweets only
