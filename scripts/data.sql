@@ -1,0 +1,1 @@
+SELECT * FROM tweet_reactions_tweetreaction;

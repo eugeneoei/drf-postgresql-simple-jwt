@@ -29,6 +29,11 @@ TBC
 
 - Add `CommentReaction` model
 - Blacklist tokens on password update and when tokens are refreshed
+- Include `sql` script to preload data
+```bash
+# psql -h 127.0.0.1 -d <db-name> -f path/to/sql/script
+psql -h 127.0.0.1 -d drf_custom_user_model -f ./scripts/data.sql
+```
 
 # Common Questions
 
