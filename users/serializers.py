@@ -126,15 +126,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
             # return first page tweets only
             tweets = paginator.page(1)
             serializer = TweetSerializer(tweets, many=True)
-            '''
-            QUESTIONS:
-            - how to return paginated info such as total object count, number of pages etc?
-            - information is available in paginator object
-                > paginator.count
-                > paginator.num_pages
-                > paginator.page_range
-            '''
-            return serializer.data
+            tweets_count = paginator.count
+            total_num_of_pages = paginator.num_pages
+            # paginator.page_range returns a Range object so we need to convert it to a list
+            page_range = list(paginator.page_range)
+            return {
+                'data': serializer.data,
+                'count': tweets_count,
+                'num_pages': total_num_of_pages,
+                'page_range': page_range
+            }
 
         # QUESTIONS: correct way to throw an exception?
         raise Exception('PAGE_SIZE not set for REST_FRAMEWORK in settings.py')
