@@ -96,6 +96,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
             )
         return super().update(instance, validated_data)
 
+    def validate_password_and_confirm_password(self, password, confirm_password):
+        if not password == confirm_password:
+            raise serializers.ValidationError({
+                'error': 'Password and confirm password do not match.'
+            })
+        return
+
+    def validate_email_existence(self, email):
+        user = User.objects.filter(email=email).first()
+        if user:
+            raise serializers.ValidationError({
+                'error': 'Email has already been taken.'
+            })
+        return
+
     def validate(self, attrs):
         '''
         validate that:
@@ -106,38 +121,62 @@ class CustomUserSerializer(serializers.ModelSerializer):
         password = data.get('password')
         confirm_password = data.get('confirm_password', None)
         email = data.get('email')
-        if not password == confirm_password:
-            raise serializers.ValidationError({
-                'error': 'Password and confirm password do not match.'
-            })
 
-        user = User.objects.filter(email=email).first()
-        if user:
-            raise serializers.ValidationError({
-                'error': 'Email has already been taken.'
-            })
+        self.validate_password_and_confirm_password(password, confirm_password)
+        # if not password == confirm_password:
+        #     raise serializers.ValidationError({
+        #         'error': 'Password and confirm password do not match.'
+        #     })
+
+        self.validate_email_existence(email)
+        # user = User.objects.filter(email=email).first()
+        # if user:
+        #     raise serializers.ValidationError({
+        #         'error': 'Email has already been taken.'
+        #     })
 
         return super().validate(attrs)
+
+    def get_pagination_results(self, object_serializer, objects, page_size):
+        paginator = Paginator(objects, page_size)
+        # return first page tweets only
+        results = paginator.page(1)
+        results_count = paginator.count
+        total_num_of_pages = paginator.num_pages
+        # paginator.page_range returns a Range object so we need to convert it to a list
+        page_range = list(paginator.page_range)
+        has_next_page = total_num_of_pages > 1
+        serializer = object_serializer(results, many=True)
+        return {
+            'data': serializer.data,
+            'count': results_count,
+            'num_pages': total_num_of_pages,
+            'has_next_page': has_next_page,
+            'page_range': page_range
+        }
 
     def paginated_tweet(self, obj):
         page_size = REST_FRAMEWORK_SETTINGS.get('PAGE_SIZE', None)
         if page_size:
-            paginator = Paginator(obj.tweets.all(), page_size)
-            # return first page tweets only
-            tweets = paginator.page(1)
-            serializer = TweetSerializer(tweets, many=True)
-            tweets_count = paginator.count
-            total_num_of_pages = paginator.num_pages
-            # paginator.page_range returns a Range object so we need to convert it to a list
-            page_range = list(paginator.page_range)
-            has_next_page = total_num_of_pages > 1
-            return {
-                'data': serializer.data,
-                'count': tweets_count,
-                'num_pages': total_num_of_pages,
-                'has_next_page': has_next_page,
-                'page_range': page_range
-            }
+            # paginator = Paginator(obj.tweets.all(), page_size)
+            # # return first page tweets only
+            # tweets = paginator.page(1)
+            # serializer = TweetSerializer(tweets, many=True)
+            # tweets_count = paginator.count
+            # total_num_of_pages = paginator.num_pages
+            # # paginator.page_range returns a Range object so we need to convert it to a list
+            # page_range = list(paginator.page_range)
+            # has_next_page = total_num_of_pages > 1
+            # return {
+            #     'data': serializer.data,
+            #     'count': tweets_count,
+            #     'num_pages': total_num_of_pages,
+            #     'has_next_page': has_next_page,
+            #     'page_range': page_range
+            # }
+
+            tweets = obj.tweets.all()
+            return self.get_pagination_results(TweetSerializer, tweets, page_size)
 
         # QUESTIONS: correct way to throw an exception?
         raise Exception('PAGE_SIZE not set for REST_FRAMEWORK in settings.py')

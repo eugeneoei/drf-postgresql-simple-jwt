@@ -30,13 +30,17 @@ TBC
 - [ ] Add `CommentReaction` model
 - [ ] Add Follower-Followee relationship
 - [ ] Include pagination information for related fields in each model
-    - tweets results when querying for a user to include total count of tweets
-    - comments results when querying for a tweet to include total count of comments
+- [x] Paginate tweet results when querying for a user and include page info
+- [ ] Paginate comments results when querying for a tweet and include page info
+- [ ] Search for users
+- [ ] Search for tweets
 - [ ] Blacklist tokens on password update and when tokens are refreshed
 - [ ] Include `sql` script to preload data
 ```bash
 # psql -h 127.0.0.1 -d <db-name> -f path/to/sql/script
 psql -h 127.0.0.1 -d drf_custom_user_model -f ./scripts/data.sql
+
+# https://stackoverflow.com/questions/53702621/read-csv-file-in-sql
 ```
 
 # Common Questions
